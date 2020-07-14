@@ -1,3 +1,30 @@
+var made_white = false;
+
+function pause() {
+	lightLayer.pauseAnimation()
+}
+
+function stepp() {
+	lightLayer.resumeAnimation();
+	setTimeout(pause, 50);
+}
+
+document.onkeypress = stepp;
+
+document.onclick = function() {
+	pause();
+	if (!made_white) {
+		$("rect").eq(43).attr("fill", "#ffffff");
+		$("rect").eq(46).attr("fill", "#ffffff");
+		made_white = true;
+	}
+};
+
+
+
+
+
+
 // #################################################################################################
 // QED Engine tutorials
 // Copyright (C) 2015-2016 Georgetown University
@@ -125,31 +152,31 @@ function setLabels1() {
 function setDefaultLabels() {
 	app.labelManager.clearLabels();
 	app.arrowManager.clearArrows();
-		
+
 	app.labelManager.addLabel({ at: {x: 10, y: 10}, align: [-1,-1] },
 		"<p style=\"font-size:100%\">press <img width=\"31\" height=\"25\" src=\""+Engine.assetURL("button_help.png")+"\"/> again to exit the help window.</p>");
-	
+
 	app.labelManager.addLabel({ at: photonSource, align: [-1,0] },
 		"Photon\nsource\nPress to\nchange color");
-		
+
 	app.labelManager.addLabel({ at: detector, align: [1,0] },
 		"Photon\ndetector\nDrag to\nchange\nposition");
-		
+
 	app.labelManager.addLabel({ at: {x: clocks.x + clocks.width/2, y: clocks.y + clocks.height/2 }, align: [0,0] },
 		"Clock for each path\nMouse over or long tap to highlight an\nindividual path and its respective clock and arrow");
-		
+
 	app.labelManager.addLabel({ at: {x: btGoContainer.x + 15, y: btGoContainer.y+25 }, align: [1,1] },
 		"Emit\nphoton");
-		
+
 	app.labelManager.addLabel({ at: {x: btNextContainer.x + 60, y: btNextContainer.y+25 }, align: [0,1] },
 		"Go to\nnext step");
-		
+
 	app.labelManager.addLabel({ at: {x: graph.x+graph.width/2, y: graph.y }, align: [0,-1] },
 		"Probability\nof photon\ndetection\n(horizontal)\nvs.\nposition of\nthe detector\n(vertical)");
-		
+
 	app.labelManager.addLabel({ at: {x: amps.x+amps.width/2, y: amps.y+20 }, align: [0,-1] },
 		"Computation\nwindow with\nprobability\namplitude\narrows");
-	
+
 	app.labelManager.addLabel({ at: {x: msg.x+msg.width/2, y: msg.y+msg.height/2 }, align: [0,0] },
 		"Instruction box");
 }
@@ -159,25 +186,25 @@ function setDefaultLabels() {
 function step1() {
 	setLabels1();
 	app.showLabelLayer([btHelpContainer]);
-	
+
 	app.arrowManager.addArrow({ x: btHelpContainer.x - 15, y: btHelpContainer - 15 }, 135 );
 	app.arrowManager.show();
-	
+
 	// Go to step 2
 	btHelp.onPress(step2);
 	btHelpContainer.blinkOn(true);
-	
+
 	for (var i = -SLIT_SIZE/2;i <= SLIT_SIZE/2;i+=1) {
 		createLightPath(exp.height/2 + 10*i);
 	}
 	plotProbability();
-	
+
 	detector.setPosition(560, exp.height/2);
 	lightLayer.changePointAllPaths(2, { x: detector.x, y: detector.y }, true);
-	
+
 	amps.drawAmplitudes(lightLayer);
 	amps.showTotalAmplitudeArrow();
-	
+
 	glowManager.enable();
 	btGo.disable();
 	btGraph.onPress(function(){ amps.toggleTotalAmplitudeArrow(); });
@@ -216,13 +243,13 @@ function step2() {
 		app.toggleLabelLayer([btHelpContainer]);
 	});
 	msg.setMessage( TEXT['move_detector'] );
-	
+
 	app.arrowManager.clearArrows();
 	app.arrowManager.addArrow({
-		x: detector.x - 10, 
-		y: detector.y - 10 
+		x: detector.x - 10,
+		y: detector.y - 10
 	}, 145);
-	
+
 	// exp.blinkOn(true);
 	detector.onTop();
 	detector.enableDrag();
@@ -250,13 +277,13 @@ function step3() {
 	btNext.offPress();
 	msg.setMessage( TEXT['change_color'] );
 	photonSource.setCursor("pointer");
-	
+
 	app.arrowManager.clearArrows();
 	app.arrowManager.addArrow({
 		x: exp.x + photonSource.x + 20,
 		y: exp.y + photonSource.y - 35
 	},60);
-	
+
 	Engine.addEvent({ source: photonSource, node: photonSource.container.node }, "press", changeColor);
 }
 

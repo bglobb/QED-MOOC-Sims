@@ -1,3 +1,41 @@
+setTimeout(function(){
+
+var made_white = false;
+
+function pause() {
+	lightLayerBottom.pauseAnimation();
+	lightLayerTop.pauseAnimation();
+	lightLayerSlits.pauseAnimation();
+}
+
+function stepp() {
+	lightLayerBottom.resumeAnimation();
+	lightLayerTop.resumeAnimation();
+	lightLayerSlits.resumeAnimation();
+	setTimeout(pause, 50);
+}
+
+document.onkeypress = stepp;
+
+document.onclick = function() {
+	pause();
+	if (!made_white) {
+		$("rect").eq(11).attr("fill", "#ffffff");
+		$("rect").eq(12).attr("fill", "#ffffff");
+		$("rect").eq(15).attr("fill", "#ffffff");
+		$("rect").eq(16).attr("fill", "#ffffff");
+		made_white = true;
+	}
+};
+}, 1000)
+
+
+
+
+
+
+
+
 // #################################################################################################
 // QED Engine tutorials
 // Copyright (C) 2015-2016 Georgetown University

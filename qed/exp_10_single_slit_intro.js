@@ -1,3 +1,34 @@
+var made_white = false;
+
+function pause() {
+	lightLayer.pauseAnimation()
+}
+
+function stepp() {
+	lightLayer.resumeAnimation();
+	setTimeout(pause, 50);
+}
+
+document.onkeypress = stepp;
+
+document.onclick = function() {
+	pause();
+	if (!made_white) {
+		$("rect").eq(8).attr("fill", "#ffffff");
+		$("rect").eq(10).attr("fill", "#ffffff");
+		made_white = true;
+	}
+};
+
+
+
+
+
+
+
+
+
+
 // #################################################################################################
 // QED Engine tutorials
 // Copyright (C) 2015-2016 Georgetown University
@@ -177,34 +208,34 @@ function setLabels1() {
 
 function setLabels2() {
 	app.labelManager.clearLabels();
-		
+
 	app.labelManager.addLabel({ at: {x: 10, y: 10}, align: [-1,-1] },
 		"<p style=\"font-size:100%\">press <img width=\"31\" height=\"25\" src=\""+Engine.assetURL("button_help.png")+"\"/> again to exit the help window.</p>");
-	
+
 	app.labelManager.addLabel({ at: photonSource, align: [-1,0] },
 		"Photon\nsource\nPress to\nchange color");
-	
+
 	app.labelManager.addLabel({ at: detector, align: [1,0] },
 		"Photon\ndetector.\nDrag to\nchange\nposition");
 
 	app.labelManager.addLabel({ at: {x: exp.x + exp.width/2, y: exp.y + exp.height*0.7}, align: [0,0] },
 		"Press along the line\nbetween the\nbarriers to\ncreate paths");
-	
+
 	app.labelManager.addLabel({ at: {x: clocks.x + clocks.width/2, y: clocks.y + clocks.height/2 }, align: [0,0] },
 		"Clock for each path\nMouse over or long tap to highlight an\nindividual path and its respective clock and arrow");
-		
+
 	app.labelManager.addLabel({ at: {x: btGoContainer.x + 15, y: btGoContainer.y+25 }, align: [1,1] },
 		"Emit\nphoton");
-		
+
 	app.labelManager.addLabel({ at: {x: btNextContainer.x + 60, y: btNextContainer.y+25 }, align: [0,1] },
 		"Go to\nnext step");
 
 	app.labelManager.addLabel({ at: {x: graph.x+graph.width/2, y: graph.y }, align: [0,-1] },
 		"Probability\nof photon\ndetection\n(horizontal)\nvs.\nposition of\nthe detector\n(vertical)");
-		
+
 	app.labelManager.addLabel({ at: {x: amps.x+amps.width/2, y: amps.y+20 }, align: [0,-1] },
 		"Computation\nwindow with\nprobability\namplitude\narrows");
-	
+
 	app.labelManager.addLabel({ at: {x: msg.x+msg.width/2, y: msg.y+msg.height/2 }, align: [0,0] },
 		"Instruction box");
 }
@@ -246,14 +277,14 @@ function step3() {
 	btHelp.offPress();
 	setLabels3();
 	app.showLabelLayer([msg]);
-	
+
 	app.arrowManager.clearArrows();
 	app.arrowManager.addArrow({x: msg.x - 10, y: msg.y - 10 },135);
 	app.arrowManager.show();
 	app.arrowManager.onTop();
-	
+
 	msg.setMessage( TEXT['instruction_box'] );
-	
+
 	btHelp.setState(false);
 	btHelpContainer.blinkOff();
 	// Go to step 4
@@ -267,15 +298,15 @@ function step4() {
 	Engine.log("step4");
 	Engine.removeEvent({ source: msg, node: msg.div }, "press");
 	photonSource.setCursor("pointer");
-	
+
 	app.arrowManager.clearArrows();
 	app.arrowManager.addArrow({
 		x: exp.x + photonSource.x + 20,
 		y: exp.y + photonSource.y - 35
 	},60);
-	
+
 	msg.setMessage( TEXT['press_source'] );
-	
+
 	setLabels2();
 	app.hideLabelLayer();
 	btHelp.onPress(function(){
@@ -297,26 +328,26 @@ var markers = [];
 function step5(e) {
 	Engine.removeEvent({ source: photonSource, node: photonSource.container.node }, "press");
 	photonSource.setCursor("default");
-	
+
 	app.arrowManager.clearArrows();
 	app.arrowManager.addArrow({
 		x: exp.x + exp.width / 2 - 10,
 		y: exp.y + exp.height / 2 - SLIT_SIZE*10/2 - 10
 	},140);
-	
+
 	msg.setMessage( TEXT['add_paths'] );
-	
+
 	var m;
 	m = new Engine.DotMarker(); exp.add(m, 300, 200 - SLIT_SIZE/2*10, true); markers.push(m);
 	m = new Engine.Marker("Start here"); exp.add(m, 300, 200 - (SLIT_SIZE+4)/2*10, true); markers.push(m);
-	
+
 	m = new Engine.DotMarker(); exp.add(m, 300, 200 + SLIT_SIZE/2*10, true); markers.push(m);
 	m = new Engine.Marker("End here"); exp.add(m, 300, 200 + (SLIT_SIZE/2+4)*10, true); markers.push(m);
-	
+
 	photonSource.setColor(2);
 	lightLayer.setColor(Engine.STYLE.Colors[photonSource.color].color);
 	lightLayer.setFrequency(Engine.STYLE.Colors[photonSource.color].frequency);
-	
+
 	// use click instead of press to get event on the div
 	// this is necessary because the SVG object unfortunately captures the event and there's no event bubbling
 	Engine.addEvent({ source: exp, node: exp.div }, "click", function(e) {
@@ -340,7 +371,7 @@ var usedPaths = {'total':0};
 // It also creates the associated clock and the associations
 function createLightPath(y) {
 	if (usedPaths[y]) return;
-	
+
 	var path = new Engine.LightPath(1);
 	path.addPoint({ x: photonSource.x, y: photonSource.y });
 	path.addPoint({ x: 300, y: y });
@@ -348,7 +379,7 @@ function createLightPath(y) {
 	path.updateData(); // call this manually so the Engine knows when to compute the entire path, instead of computing every new point
 	lightLayer.addPath(path);
 	path.clock = clocks.addClock(photonSource.color);
-	
+
 	usedPaths[y] = 1;
 	usedPaths.total++;
 }
@@ -362,18 +393,18 @@ function step6() {
 		}
 	}
 	Engine.removeEvent({ source: exp, node: exp.div }, "click");
-	
+
 	app.arrowManager.clearArrows();
 	app.arrowManager.addArrow({
 		x: btGoContainer.x - 10,
 		y: btGoContainer.y + 10
 	},160);
-	
+
 	msg.setMessage( TEXT['shoot_photon'] );
 	lightLayer.clear();
 	btGoContainer.blinkOn(true);
 	clocks.clear();
-	
+
 	// We reset the usePaths object so we can reuse the createLightPath command
 	usedPaths = {'total':0};
 	for (var i = -SLIT_SIZE/2;i <= SLIT_SIZE/2;i++) {
@@ -386,7 +417,7 @@ function step6() {
 		btGo.offPress();
 		btGo.disable();
 		app.arrowManager.clearArrows();
-	});	
+	});
 }
 
 /* ------- STEP 7 -------- */
@@ -395,21 +426,21 @@ function step7() {
 	amps.useTotalAmplitudeLengthText = true;
 	// amps.drawAmplitudes(exp.getAmplitudes());
 	// app.glowManager.enable();
-	
+
 	amps.drawAmplitudes(lightLayer);
 	detector.blink();
 	glowManager.enable();
-	
+
 	msg.setMessage( TEXT['press_graph'] );
 	amps.onTop();
-	
+
 	app.arrowManager.addArrow({
 		x: amps.x + btGraph.x + 25,
 		y: amps.y + btGraph.y - 10
 	},100);
 	app.arrowManager.show();
 	app.arrowManager.onTop();
-	
+
 	setTimeout(function(){ amps.blinkOn(true); }, 1500);
 	btGraph.enable();
 	btGraph.onPress(step8);
@@ -423,17 +454,17 @@ function step8() {
 	amps.blinkOff();
 	amps.setTotalAmplitudeColor(photonSource.color);
 	amps.showTotalAmplitudeArrow();
-	
+
 	app.arrowManager.clearArrows();
 	app.arrowManager.addArrow({
 		x: btNextContainer.x - 10,
 		y: btNextContainer.y + 10
 	},160);
-	
+
 	var y = detector.y - exp.height/2;
 	// alert(amps.getMaxAmplitude());
 	graph.drawBar(y, Math.pow(amps.getNormalizedTotalAmplitude(),2), photonSource.color);
-	
+
 	usedLocations[detector.y] = 1;
 	btGraph.offPress();
 	btGraph.disable();
@@ -454,24 +485,24 @@ function step9() {
 	btNext.offPress();
 	btNext.disable();
 	btNextContainer.blinkOff();
-	
+
 	// Engine.removeEvent({ source: msg, node: msg.div }, "press");
 	amps.resetBlink();
 	amps.clear();
-	
+
 	clocks.reset();
-	
+
 	msg.setMessage( TEXT['drag_detector'] );
 	exp.add(detectorIndicator, 560, 290);
 	$(detectorIndicator.container.node).hide();
 	$(detectorIndicator.container.node).fadeTo(500, 0.5);
-	
+
 	app.arrowManager.clearArrows();
 	app.arrowManager.addArrow({
 		x: exp.x + detectorIndicator.x - 20,
 		y: exp.y + detectorIndicator.y + 20
 	},-140);
-	
+
 	exp.blinkOn(true);
 	detector.onTop();
 	detector.enableDrag();
@@ -498,13 +529,13 @@ function step10() {
 	detector.setCursor("default");
 	detector.setPosition(detectorIndicator.x,detectorIndicator.y);
 	exp.remove(detectorIndicator); delete detectorIndicator;
-	
+
 	// app.arrowManager.clearArrows();
 	// app.arrowManager.addArrow({
 		// x: clocks.x + clocks.width / 2,
 		// y: clocks.y - 0
 	// },90);
-	
+
 	msg.setMessage( TEXT['shoot_photon_again'] );
 	btGo.enable();
 	btGo.onPress(function(){
@@ -518,11 +549,11 @@ function step10() {
 
 /* ------- STEP 11 -------- */
 function step11() {
-	
+
 	amps.drawAmplitudes(lightLayer);
 	detector.blink();
 	glowManager.enable();
-	
+
 	msg.setMessage( TEXT['press_graph_again'] );
 	amps.onTop();
 	setTimeout(function(){ amps.blinkOn(true); }, 1500);

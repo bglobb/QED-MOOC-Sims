@@ -95,7 +95,7 @@ var Engine = {
 		AppBG: "135-#AAAAAA-#DDDDDD",
 		ClockBoxBG: "90-#999999:60-#777777:100-#777777",
 		BoxBorder: "1px solid #555555",
-		GlowColor: "#FFFF00",
+		GlowColor: "#1f1f1f",
 		GlowOpacity: "0.8",
 		GlowWidth: 10,
 		PhotonSize: 3,
@@ -1874,7 +1874,7 @@ var Engine = {
 
 			var fcg = p.group();
 			var f = p.rect(-3, -11, 14, 22).attr({ 'stroke': "none", 'fill': Engine.STYLE.GlowColor, 'opacity': 0.5 });
-			var fg = f.glow({width: 10, fill: true, opacity: Engine.STYLE.GlowOpacity, color: Engine.STYLE.GlowColor});
+			var fg = f.glow({width: 50, fill: true, opacity: Engine.STYLE.GlowOpacity, color: Engine.STYLE.GlowColor});
 			fcg.push(f);
 			fcg.push(fg);
 			cg.push(fcg);
@@ -1892,9 +1892,12 @@ var Engine = {
 		// This is to indicate "something was detected" for the double slit experiment
 		this.blink = function() {
 			$(this.flash.node).fadeIn({
-				'duration': 200,
+				'duration': 0,
 				'complete': function() {
-					$(this).fadeOut(200);
+					var t = $(this);
+					setTimeout(function() {
+						t.fadeOut(0);
+					}, 5000);
 				}
 			});
 		}
@@ -2503,7 +2506,9 @@ var Engine = {
 	// The same is true for glowColor parameter
 	// This allows us to create arbitrary path colors for highlighting paths
 	// If  glow not specified, use default in Engine.STYLE
+
 	LightLayer: function(color, frequency, glowColor) {
+		console.log(this);
 		this.timer = 0;
 		this.frame = 0;
 		this.totalFrames = 0;

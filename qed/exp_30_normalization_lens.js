@@ -1,3 +1,32 @@
+var made_white = false;
+
+function pause() {
+	lightLayer.pauseAnimation()
+}
+
+function stepp() {
+	lightLayer.resumeAnimation();
+	setTimeout(pause, 50);
+}
+
+document.onkeypress = stepp;
+
+document.onclick = function() {
+	pause();
+	if (!made_white) {
+		$("rect").eq(6).attr("fill", "#ffffff");
+		$("rect").eq(9).attr("fill", "#ffffff");
+		made_white = true;
+	}
+};
+
+
+
+
+
+
+
+
 ﻿// #################################################################################################
 // QED Engine tutorials
 // Copyright (C) 2015-2016 Georgetown University
